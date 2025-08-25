@@ -4,6 +4,6 @@ Content-Type: application/json
 {
     "name":"Test event",
     "description": "A test event",
-    "location":"A test location",
-    "dataTime":"2025-01-01t15:30:00:00Z"
+    "location": "A test location",
+    "dateTime": "2025-01-01T15:30:00.000Z"
 }
