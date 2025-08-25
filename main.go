@@ -8,11 +8,10 @@ import (
 
 func main() {
 	db.InitDB()
-	server := gin.Default()		
+	server := gin.Default()
 
 	server.GET("/events", routes.GetEvents) //GET,POST,PUT,PATCH,DELETE
 	server.GET("/events/:id", routes.GetEvent)
 	server.POST("/events", routes.CreateEvent)
-	server.Run(":8080")//localhost:8080
+	server.Run(":8080") //localhost:8080
 }
-
