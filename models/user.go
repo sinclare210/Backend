@@ -1,6 +1,8 @@
 package models
 
 import (
+	"errors"
+
 	"github.com/sinclare210/Backend.git/db"
 	"github.com/sinclare210/Backend.git/utils"
 )
@@ -43,5 +45,33 @@ func (user User)Save() error{
 	user.Id = userId
 	return nil
 	
+
+}
+
+func (user User)ValidateCredentials()error{
+	query := `
+	SELECT password FROM users WHERE email = ?
+	`
+
+	stmt, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	rows := stmt.QueryRow(user.Email)
+	var retrivedPassword string
+	err = rows.Scan(&retrivedPassword)
+	if err != nil{
+		return err
+	}
+	
+	passwordIsValid := utils.CheckPassowrHash(user.Password,retrivedPassword)
+
+	if !passwordIsValid{
+		return errors.New("Credential invalid")
+	}
+	return nil
 
 }
