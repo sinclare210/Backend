@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sinclare210/Backend.git/models"
+	"github.com/sinclare210/Backend.git/utils"
 )
 
 func signUp(context *gin.Context){
@@ -42,7 +43,15 @@ func login(context *gin.Context){
 	if err != nil{
 		context.JSON(http.StatusUnauthorized,gin.H{"message":"Could not authenticate user"})
 		return 
-	}
+	} 
 
-	context.JSON(http.StatusOK,gin.H{"message":"Login successfull"})
+	token,err := utils.GenerateToken(user.Email,user.Id)
+	
+	if err != nil{
+		context.JSON(http.StatusInternalServerError,gin.H{"message":"Could not authenticate user"})
+		return 
+	} 
+
+
+	context.JSON(http.StatusOK,gin.H{"message":"Login successfull","token": token})
 }

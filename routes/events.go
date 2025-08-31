@@ -6,7 +6,9 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	
 	"github.com/sinclare210/Backend.git/models"
+	
 )
 
 func getEvents(context *gin.Context){
@@ -19,6 +21,7 @@ func getEvents(context *gin.Context){
 }
 
 func createEvent(context *gin.Context){
+	
 	var event models.Event
 
 	err := context.ShouldBindJSON(&event)
@@ -28,8 +31,10 @@ func createEvent(context *gin.Context){
 		return
 	}
 
-	event.ID = 1
-	event.UserID = 1
+	user_id := context.GetInt64("user_id")
+
+	
+	event.UserID = user_id
 	err = event.Save()
 	if err != nil{
 		context.JSON(http.StatusInternalServerError,gin.H{"message":"Could not create event, try again later"})
@@ -61,10 +66,17 @@ func updateEvent(context *gin.Context){
 		context.JSON(http.StatusBadRequest,gin.H{"message":"Could not parse event id"})
 		return
 	}
-
-	_, err = models.GetEventById(eventId)
+	user_id := context.GetInt64("user_id")
+	event, err := models.GetEventById(eventId)
 		if err != nil{
 		context.JSON(http.StatusInternalServerError,gin.H{"message":"Could not fecth the event"})
+		return
+	}
+	
+	
+
+	if event.UserID != user_id{
+		context.JSON(http.StatusUnauthorized,gin.H{"message":"Not athorized to update event"})
 		return
 	}
 
@@ -99,6 +111,12 @@ func deleteEvent(context *gin.Context){
 	deleteEvent, err := models.GetEventById(eventId)
 		if err != nil{
 		context.JSON(http.StatusInternalServerError,gin.H{"message":"Could not fecth the event"})
+		return
+	}
+//comparism
+	user_id := context.GetInt64("user_id")
+	if deleteEvent.UserID != user_id{
+		context.JSON(http.StatusUnauthorized,gin.H{"message":"Not athorized to update event"})
 		return
 	}
 

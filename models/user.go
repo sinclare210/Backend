@@ -48,9 +48,9 @@ func (user User)Save() error{
 
 }
 
-func (user User)ValidateCredentials()error{
+func (user *User)ValidateCredentials()error{
 	query := `
-	SELECT password FROM users WHERE email = ?
+	SELECT id,password FROM users WHERE email = ?
 	`
 
 	stmt, err := db.DB.Prepare(query)
@@ -62,7 +62,7 @@ func (user User)ValidateCredentials()error{
 
 	rows := stmt.QueryRow(user.Email)
 	var retrivedPassword string
-	err = rows.Scan(&retrivedPassword)
+	err = rows.Scan(&user.Id,&retrivedPassword)
 	if err != nil{
 		return err
 	}
@@ -70,7 +70,7 @@ func (user User)ValidateCredentials()error{
 	passwordIsValid := utils.CheckPassowrHash(user.Password,retrivedPassword)
 
 	if !passwordIsValid{
-		return errors.New("Credential invalid")
+		return errors.New("credential invalid")
 	}
 	return nil
 
