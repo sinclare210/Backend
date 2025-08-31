@@ -4,9 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-
 	"github.com/gin-gonic/gin"
-	
 	"github.com/sinclare210/Backend.git/models"
 	
 )
@@ -116,7 +114,7 @@ func deleteEvent(context *gin.Context){
 //comparism
 	user_id := context.GetInt64("user_id")
 	if deleteEvent.UserID != user_id{
-		context.JSON(http.StatusUnauthorized,gin.H{"message":"Not athorized to update event"})
+		context.JSON(http.StatusUnauthorized,gin.H{"message":"Not athorized to delete event"})
 		return
 	}
 
